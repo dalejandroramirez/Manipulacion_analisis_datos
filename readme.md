@@ -232,4 +232,28 @@ Sea una funcion booleana func,
 # Datos duplicados
 Es muy usual que los registros de una base de datos aparezcan más de una vez, así que veamos cómo pandas puede ayudarnos a lidiar con estos casos. Para comenzar, importemos pandas y creemos un DataFrame con dos columnas y algunos datos repetidos.
 
+Para encontrar los registros duplicados usamos duplicated , que marca con True aquellos casos de filas duplicadas:
 
+- df.duplicated()
+
+Podemos usar keep='first' para marcar solo la primera ocurrencia o keep='last' para marcar la última:
+
+- df.duplicated(keep='first')
+
+Identificados los casos duplicados, podemos usar este resultado para filtrar y seleccionar aquellos que no tienen un registro duplicado:
+
+- df[~ df.duplicated()]
+
+Remarco el hecho de que usé negación '~' para ver los registros no duplicados.
+
+si me interesara ver cuáles son los registros duplicados, podemos usar keep=False:
+
+- df.duplicated(keep=False)
+
+ puedes usar el comando 'drop_duplicates' para eliminar los duplicados. Por defecto, la función guarda el primer resultado keep='first':
+
+ - df.drop_duplicates()
+
+ Y si quieres solo borrar duplicados teniendo en cuenta una sola columna, lo puedes hacer mediante una lista nombrando las columnas donde vas a eliminar los duplicados, en este caso, ['a']:
+
+ df.drop_duplicates(['a'],keep='last')
