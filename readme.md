@@ -256,4 +256,135 @@ si me interesara ver cuáles son los registros duplicados, podemos usar keep=Fal
 
  Y si quieres solo borrar duplicados teniendo en cuenta una sola columna, lo puedes hacer mediante una lista nombrando las columnas donde vas a eliminar los duplicados, en este caso, ['a']:
 
- df.drop_duplicates(['a'],keep='last')
+ - df.drop_duplicates(['a'],keep='last')
+
+ - df.groupby("sex")[["porc_propina","total_bill"]].describe()
+Realiza una describcion de cada na de las columnas que le ingrese al data set
+
+- df.groupby("sex")["total_bill"].apply(lambda x: x*1.12)
+
+Si se quiere agregas mas funciones se usa aggregate
+
+
+# Extraer valor con variables categoricas
+
+Para convertir datos en categoritco se uns cut
+
+- pd.cut(df["total_bill"],bins=3)
+
+donde bins es el numero de subconjutos que se van a realizar y usando pd.cut(df["total_bill"],bins=3).value_counts(), se ve cuandos elementos estan en cada categoria
+
+- pd.cut(df["total_bill"],bins=[3,18,35,60])
+ en este aso se define los puntos de corte en 3 < 18< 35<60
+ y para ver cuantos elementos se encuetran en cada categoria se usa  pd.cut(df["total_bill"],bins=[3,18,35,60]).value_counts()
+
+ # Tablas dinamicas con pivot_table
+
+ Nota: con .reset_index() se resetean los indices y quedan las tablas completas con cada uno de estos
+
+- df.pivot_table(values="total_bill", index="sex","columns="time", aggfunc=funcion)
+
+donde values son los valores que se van a tener en la tabla, index va a ser nuetros indices y columns las columnas, aggfunc lo que hace es aplicar la funcion que se pide, en caso de no tener este parametro esta calcula ma media
+
+# Series de tiempo
+Comandos importantes:
+
+- list(df)
+Retorna una lista con las columnas del df
+
+Para concatenar dos series donde se tienen indices compartidos se pueden realizar operaciones y si existe un indice que no se comparten se queda un NAN.
+
+
+Supongamos que se tiene un serie (x_1,x_2,...x_n), entonces con el comando df.diff()  genera una nueva serie (y_1,y_2,...,y_n)
+donde 
+y_1=Nan
+y_2=x_1-x_2
+   .
+   .
+   .
+y_n=x_{n-1}-x_n
+
+- df.fillna(dict)
+
+llena los datos faltantes del dataframe, donde en dict hay un diccionario en que las llaves son las columans del dataframe y el valor es el valor del dataset.
+
+- df.cumsum()
+Realiza la operacion inversa en el sentido que si se tiene {y_1,y_2,...,y_n} observaciones entonces la suma acumulativa df_diff.cumsum()
+devuelve una serie de tiempo {x1,x2,...xn} tal que
+
+x1=y1
+x2=y1+y2
+x3= x2+y3=y1+y2+y3
+x4=x3+y4=y1+y2+y3+y4
+  .
+  .
+  .
+xn=sum(y1,y2,y3,...yn)
+
+# resample()
+
+- df.resample('7D').apply(funcion)
+
+para realizar una agrupacion por dias o semanas en el data set y aplicarle una funcion.
+
+ejemplo df.resample('7D').sum() devulve la suma de los datos cada 7 dias 
+
+- df.resample('W-Sun') : agrupa cada domingo
+
+- df.resample('M') : agrupa cada mes
+
+- df.resample('12h') : agrupa cada 12 horas
+
+# Variables nulas en series de tiempo
+
+- df.bfill() 
+copia el valor siguiente donde habia un valor nulo es decir si en la entrada
+i hay un null .bfill() la remplaza por el valor que esta en la entrada i+1.
+
+- df.ffill()
+copia el valor anterior donde habia un valor nulo es decir si en la entrada
+i hay un null .bfill() la remplaza por el valor que esta en la entrada i-1.
+
+- df.fillna(valor) remplaza los nulos por el valor ingresado en valor
+
+- df.interpolate() 
+donde hay null se pondrá la interpolacion de los datos (el valor medio)
+
+# Crear series de tiempo donde la variable tiempo no es el indice
+
+para esto se se agrupo usando pd.Grouper(key,freq)
+
+donde key es la columna que tiene los indices de la serie de tiempo y freq es cada cuanto se va agrupar, si 
+freq="M" es cada mes,
+frqe="1D" es cada dia
+ ejemplo:
+df_cum.groupby(pd.Grouper(key="ObservationDate",freq="M"))[["rate"]].mean()
+
+agrupa cada mes y realiza la media con groupby
+
+
+# Series de tiempo
+Uno diferencia con la serie de tiempo y el data set es que en general las entradas del dataset son doble corchete mientras que en la serie se tiene un solo corchete, un ejemplo es el anterior
+
+- df_cum.groupby(pd.Grouper(key="ObservationDate",freq="M"))[["rate"]].mean()  : esto es un dataset
+
+- df_cum.groupby(pd.Grouper(key="ObservationDate",freq="M"))["rate"].mean() : esto es una serie de tiempo 
+
+
+# rolling
+
+dada una serie sr el comando .rolling permite hacer promedios con ventanas de frecuencia.
+
+- sr.rolling(windows=7).mean()
+
+- sr.rolling(windows=7).apply(<funcion>)
+
+esto realiza ventanas cada 7 dias, en el sentido que agrupa los datos cada 7 dias
+
+
+
+
+
+
+
+
