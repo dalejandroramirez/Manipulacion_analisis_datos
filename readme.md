@@ -279,6 +279,11 @@ donde bins es el numero de subconjutos que se van a realizar y usando pd.cut(df[
  en este aso se define los puntos de corte en 3 < 18< 35<60
  y para ver cuantos elementos se encuetran en cada categoria se usa  pd.cut(df["total_bill"],bins=[3,18,35,60]).value_counts()
 
+- df[["name_column"]].astype("category")
+
+conviertes una serie de datos o una columna en un DataFrame a una variable Categórica
+
+
  # Tablas dinamicas con pivot_table
 
  Nota: con .reset_index() se resetean los indices y quedan las tablas completas con cada uno de estos
@@ -418,6 +423,10 @@ Si se quiere escoger un indice en particular se utiliza el paramento .xs("indice
 
 - df["year"].dt.year
 Supongase que en df["year"] hay variables tipo tiempo y se quiere extraer el año, entonces se usa el comando anterior
+
+
+- df.convert_dtypes() 
+Podemos usar para inferir y transformar nuestros datos al formato apropiado (integer, string, date, bool)
 
 # renombrar columnas
 
