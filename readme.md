@@ -126,7 +126,7 @@ df_copiado=df_meteorite.copy(deep=True)
 
 # Funciones lambdas
 
-- aplicar una funcion a una columna, donde el numbre de la función es func, con argumentos estaticos en args
+- aplicar una funcion a una columna, donde el nombre de la función es func, con argumentos estaticos en args
     df["nombre_colum"].apply(func,args=())
 
 - df["nombre_columna"].apply(lambda x : x**2)
@@ -217,13 +217,14 @@ Por último, Pandas también puede interporlar los valores faltanes calculando e
 crea un dataframe con dos indices y luego calcula la media de cada una de las columnas
 
 # Aggregate
+
 - df.groupby(['cut','color']).aggregate([f1,f2,f3])
 realiza un agrupamiento de las dos columnas y crea tres columnas donde se aplica las funciones f1,f2 y f3
 
 con un diccionario se puede decir a que columnas quiero aplicar el aggregate
 ejemplo:
 dict_agg={"carat":[min,max],"price":[np.mean]}
-df.groupby(["cut","color"]).aggregate(dict_agg)
+df.groupby(["cut","color"]).agg(dict_agg)
 
 # Crear filtros con filter()
 Sea una funcion booleana func,
@@ -381,10 +382,90 @@ dada una serie sr el comando .rolling permite hacer promedios con ventanas de fr
 
 esto realiza ventanas cada 7 dias, en el sentido que agrupa los datos cada 7 dias
 
+# grafica de series de tiempo
+
+Dada una serie st de tiempo, esta tiene los metodos
+
+- st.plot() hace una grafia de la serie
+
+- df_monthly=df_colombia.resample("M").max()
+    realiza una agrupacion de cada mes y mira cual fue su pico en este mes
+
+- df_monthly.plot(figsize=(10,7), kind="bar",stacked=True) 
+    En la variable df_monthly hay una serie de tiempo y se grafica una grafica de barras donde el parametro stacked es usado para decir si se superponeo o no las graficas 
+
+- df_year[['Traitment', 'Deaths', 'Recovered', ]].T.plot(figsize=(10,7),kind="pie",subplots=True)
+
+Esta es una grafica tipo pastel y es necesaria trasponer los datos y para cada na de las columnas se tiene una grafica.
+
+- df_colombia["rate"].hist(figsize=(10,7),bins=10)
+
+Realiza un histograma
+
+- df_colombia["rate"].plot(figsize=(10,7),kind="kde")
+ realiza la distrubucion
+
+
+# Documentacion Para las graficas
+https://pandas.pydata.org/docs/
 
 
 
+# Mas funcione necesarias
+
+- df_temp_averange.xs("Colombia")
+Si se quiere escoger un indice en particular se utiliza el paramento .xs("indice")
+
+- df["year"].dt.year
+Supongase que en df["year"] hay variables tipo tiempo y se quiere extraer el año, entonces se usa el comando anterior
+
+# renombrar columnas
+
+- df.rename(columns={"old_name": "new_name"},inplace=True)
+
+# boxplot
+
+Para hacer un boxplot se puede usar una tabla pivote de la siguiente forma
+
+- df_t_pivot=df_t_median.pivot_table(values="Temperature",index="date",columns="Country")
+
+esta tabla tiene de columnas los paises, indices los años y los valores son las temperaturas,
+
+ahora al realizar el boxplot el numero de columnas es el numero de cajas que se vana a analizar, y las filas son los valores a los cuales se realizará el analisis
+
+# .melt(id_vars)
+
+el metodo .melt(id_vars=["colum1","colum2"],var_name="nombre_columna") 
+recibe como entrada un lista donde se tiene las columans idenficadores las cuales se mantendran intactas,y el resto del columnas del dataset pasaran a ser parte de una nueva columna llamada por var_name , y asi se generan otra columan mas con los valores que tenian cada una de las columnas, y esta columna tendra el nombre de valuess
 
 
 
+# pd.merge(df1 ,df2,on=["col1","col2"],how="inner")
 
+donde el how es el metodo en el que se conserva la interseccion y el parametro on, son las columnas que se van a agregar, por lo tanto se conservran ambos datos
+
+
+- ejemplo:
+Si deseo unir a un primer DataFrame (df_left) los datos de un segundo (df_right) preservando las dimensiones del segundo usando una columna que tienen en común (col1), puedo usar:
+
+- df.merge(df_left,df_right,how="rigth",on="col1")
+
+
+# Problema clasico,
+- Sopongase que se tiene un data set en el  cual en las columnas esta dividido por ejemplo por paises y se quiere hacer un filtro para analisar cada pais, entonces esto se hace con
+- df_merge.set_index(["Country","date"]).sort_index().loc["Afghanistan":]
+
+- -set_index(["index1","index_2"]) convierte cada una de estas columnas en sus indeces y asi puedo localizar facilmente cada pais usando su nombre
+
+
+# Graficar resultados 
+
+sns.pairplot(data=df_med.reset_index())
+
+donde df_med es un data set con varias columnas y lo que calcula pairplot es la correlacion entre las columnas
+
+- from pandas.plotting import parallel_coordinates
+
+usando el modulo anterior se puede analizar graficar por paises donde, existe una columna con paises que será nuestra variable que indica cada uno de los coordenadas paralelas
+
+- parallel_coordinates(df_samerica,"Country")
